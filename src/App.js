@@ -8,6 +8,8 @@ import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import "./App.css";
+import Modal from "./components/Modal/Modal";
+import Profile from "./components/Profile/Profile";
 
 const particlesOptions = {
   particles: {
@@ -25,8 +27,9 @@ const initialState = {
   input: "",
   imageUrl: "",
   boxes: [],
-  route: "home",
-  isSignedIn: true,
+  route: "signin",
+  isSignedIn: false,
+  isProfileOpen: false,
   user: {
     id: "",
     name: "",
@@ -109,22 +112,38 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === "signout") {
-      this.setState(initialState);
+      return this.setState(initialState);
     } else if (route === "home") {
       this.setState({ isSignedIn: true });
     }
     this.setState({ route: route });
   };
 
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      ...prevState,
+      isProfileOpen: !prevState.isProfileOpen,
+    }));
+  };
+
   render() {
-    const { isSignedIn, imageUrl, route, boxes } = this.state;
+    const { isSignedIn, imageUrl, route, boxes, isProfileOpen } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
         <Navigation
+          toggleModal={this.toggleModal}
           isSignedIn={isSignedIn}
           onRouteChange={this.onRouteChange}
         />
+        {isProfileOpen && (
+          <Modal>
+            <Profile
+              toggleModal={this.toggleModal}
+              isProfileOpen={isProfileOpen}
+            />
+          </Modal>
+        )}
         {route === "home" ? (
           <div>
             <Logo />
