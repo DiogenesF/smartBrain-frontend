@@ -30,13 +30,15 @@ const initialState = {
   route: "signin",
   isSignedIn: false,
   isProfileOpen: false,
+
   user: {
     id: "",
     name: "",
     email: "",
     entries: 0,
     joined: "",
-    pet: "",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRBXqRKXezHfKsAvXX2HOz0QO_5dvdAj5s0Bg&usqp=CAU",
     age: "",
   },
 };
@@ -83,6 +85,8 @@ class App extends Component {
         id: data.id,
         name: data.name,
         email: data.email,
+        age: data.age ? data.age : this.state.user.age,
+        image: data.userimage ? data.userimage : this.state.user.image,
         entries: data.entries,
         joined: data.joined,
       },
@@ -182,6 +186,7 @@ class App extends Component {
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
         <Navigation
+          user={user}
           toggleModal={this.toggleModal}
           isSignedIn={isSignedIn}
           onRouteChange={this.onRouteChange}

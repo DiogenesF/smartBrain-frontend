@@ -6,9 +6,8 @@ import axios from "axios";
 const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
   const [name, setName] = useState(user.name);
   const [age, setAge] = useState(user.age);
-  const [pet, setPet] = useState(user.pet);
   const [uploadImage, setUploadImage] = useState(false);
-  const [url, setImageURL] = useState(undefined);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -19,13 +18,13 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
         Authorization: window.sessionStorage.getItem("token"),
       },
       body: JSON.stringify({
-        formInput: { name, age, pet },
+        formInput: { name, age },
       }),
     })
       .then((resp) => {
         if (resp.status === 200 || resp.status === 304) {
           toggleModal();
-          loadUser({ ...user, ...{ name, age, pet } });
+          loadUser({ ...user, ...{ name, age } });
         }
       })
       .catch((err) => console.log(err.message));
@@ -35,14 +34,36 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
     try {
       const parts = successImages[0].split(";");
       const mime = parts[0].split(":")[1];
-      const name = parts[1].split("=")[1];
+      const imgName = parts[1].split("=")[1];
       const data = parts[2];
+
+      setLoading(true);
       const res = await axios.post(
         "https://2lmv0evan3.execute-api.us-east-1.amazonaws.com/dev/image-upload",
-        { mime, name, image: data }
+        { mime, name: imgName, image: data }
       );
 
-      setImageURL(res.data.imageURL);
+      fetch(`http://192.168.99.100:3000/profile/${user.id}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: window.sessionStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          formInput: { userimage: res.data.imageURL },
+        }),
+      })
+        .then((resp) => {
+          if (resp.status === 200 || resp.status === 304) {
+            loadUser({
+              ...user,
+              ...{ name, age, userimage: res.data.imageURL },
+            });
+          }
+        })
+        .catch((err) => console.log(err.message));
+
+      setLoading(false);
       setUploadImage(false);
     } catch (err) {
       console.log("err", err);
@@ -53,14 +74,28 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
     <div className="profile-modal">
       <article className="bg-white br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
         <main className="w-80 pa4 black-80">
-          <img
-            onClick={() => setUploadImage(true)}
-            src={url}
-            className="h3 w3 dib"
-            alt="avatar"
-          />
+          <div style={{ display: "flex" }}>
+            <img
+              onClick={() => setUploadImage(true)}
+              src={user.image}
+              className="h3 w3 dib"
+              alt="avatar"
+            />
+
+            {!uploadImage && (
+              <p
+                style={{
+                  fontSize: "12px",
+                  margin: "auto 0 auto 5px",
+                }}
+              >
+                Click in the image to edit{" "}
+              </p>
+            )}
+          </div>
           {uploadImage ? (
             <form>
+              {loading && <h1 style={{ textAlign: "center" }}>Loading...</h1>}
               <ImageUploader
                 key="image-uploader"
                 singleImage={true}
@@ -96,17 +131,6 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
                 type="text"
                 name="user-age"
                 id="age"
-              />
-              <label className="mt2 fw6" htmlFor="user-pet">
-                Pet:
-              </label>
-              <input
-                onChange={(e) => setPet(e.target.value)}
-                className="pa2 ba w-100"
-                placeholder={user.pet}
-                type="text"
-                name="user-pet"
-                id="pet"
               />
               <div
                 className="mt4"
