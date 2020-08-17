@@ -11,7 +11,7 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    fetch(`http://192.168.99.100:3000/profile/${user.id}`, {
+    fetch(`http://52.70.206.91:3000/profile/${user.id}`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
         { mime, name: imgName, image: data }
       );
 
-      fetch(`http://192.168.99.100:3000/profile/${user.id}`, {
+      fetch(`http://52.70.206.91:3000/profile/${user.id}`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
