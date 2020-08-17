@@ -80,7 +80,7 @@ class Signin extends React.Component {
               </div>
               <div className="mv3">
                 <label className="db fw6 lh-copy f6" htmlFor="password">
-                  Password
+                  Passwordd
                 </label>
                 <input
                   className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white hover-black w-100"
