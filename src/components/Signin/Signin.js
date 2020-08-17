@@ -49,9 +49,13 @@ class Signin extends React.Component {
                 this.props.loadUser(user);
                 this.props.onRouteChange("home");
               }
-            });
+            })
+            .catch((err) => console.log(err.message));
+        } else {
+          alert("Wrong credentials");
         }
-      });
+      })
+      .catch((err) => console.log(err.message));
   };
 
   render() {
@@ -94,14 +98,6 @@ class Signin extends React.Component {
                 type="submit"
                 value="Sign in"
               />
-            </div>
-            <div className="lh-copy mt3">
-              <p
-                onClick={() => onRouteChange("register")}
-                className="f6 link dim black db pointer"
-              >
-                Register
-              </p>
             </div>
           </div>
         </main>
