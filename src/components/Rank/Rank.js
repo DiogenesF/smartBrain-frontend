@@ -4,9 +4,7 @@ const Rank = ({ name, entries }) => {
   const [emoji, setEmoji] = useState("");
 
   const generateEmoji = () => {
-    fetch(
-      `https://xf1ewws63m.execute-api.us-east-1.amazonaws.com/prod/rank?rank=${entries}`
-    )
+    fetch(process.env.REACT_APP_LAMBDA_RANK + `${entries}`)
       .then((resp) => resp.json())
       .then((data) => setEmoji(data.input))
       .catch((err) => console.log("Error"));

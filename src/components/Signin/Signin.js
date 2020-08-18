@@ -23,7 +23,7 @@ class Signin extends React.Component {
   };
 
   onSubmitSignIn = () => {
-    fetch("http://52.70.206.91:3000/signin", {
+    fetch(process.env.REACT_APP_BASE_URL + "/signin", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -36,7 +36,7 @@ class Signin extends React.Component {
         if (data.userId && data.success === "true") {
           this.saveAuthTokenInSession(data.token);
 
-          fetch(`http://52.70.206.91:3000/profile/${data.userId}`, {
+          fetch(process.env.REACT_APP_BASE_URL + `/profile/${data.userId}`, {
             method: "get",
             headers: {
               "Content-Type": "application/json",

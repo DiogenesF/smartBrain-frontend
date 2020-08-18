@@ -11,7 +11,7 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    fetch(`http://52.70.206.91:3000/profile/${user.id}`, {
+    fetch(process.env.REACT_APP_BASE_URL + `/profile/${user.id}`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -38,12 +38,13 @@ const Profile = ({ isProfileOpen, toggleModal, user, loadUser }) => {
       const data = parts[2];
 
       setLoading(true);
-      const res = await axios.post(
-        "https://2lmv0evan3.execute-api.us-east-1.amazonaws.com/dev/image-upload",
-        { mime, name: imgName, image: data }
-      );
+      const res = await axios.post(process.env.REACT_APP_AMAZON_S3, {
+        mime,
+        name: imgName,
+        image: data,
+      });
 
-      fetch(`http://52.70.206.91:3000/profile/${user.id}`, {
+      fetch(process.env.REACT_APP_BASE_URL + `/profile/${user.id}`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
